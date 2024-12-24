@@ -1,7 +1,9 @@
-﻿namespace UserService.Domain.Users;
+﻿using UserService.Entities.Users;
+
+namespace UserService.Domain.Users;
 
 public interface IUserRepository
 {
-    Task<UserDomain?> GetUserById(string id);
-    Task CreateUser(UserDomain user, string password);
+    Task<User?> GetUserById(string id);
+    Task<bool> CreateUser(User user, string password);
 }

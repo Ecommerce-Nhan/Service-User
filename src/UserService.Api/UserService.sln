@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Api", "UserService.Api.csproj", "{3E777C56-93F4-42DC-8994-4EC932D34C1B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Application", "..\UserService.Application\UserService.Application.csproj", "{198FAC45-1391-4B9B-B3A6-1B5C3FE147F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Domain", "..\UserService.Domain\UserService.Domain.csproj", "{AA5A8D7A-FA53-4711-A4F5-182A39C5DF8C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Entities", "..\UserService.Domain\UserService.Entities.csproj", "{AA5A8D7A-FA53-4711-A4F5-182A39C5DF8C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Infrastructure", "..\UserService.Infrastructure\UserService.Infrastructure.csproj", "{EA40FBED-DC33-4A15-BB46-19799CA6DBBB}"
 EndProject

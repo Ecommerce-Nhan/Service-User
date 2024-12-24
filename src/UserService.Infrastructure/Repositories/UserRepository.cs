@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using UserService.Domain.Users;
-using UserService.Infrastructure.IdentityEntities;
+using UserService.Entities.Users;
 
 namespace UserService.Infrastructure.Repositories;
 
@@ -11,31 +11,18 @@ public class UserRepository : IUserRepository
     {
         _userManager = userManager;
     }
-    public async Task<UserDomain?> GetUserById(string id)
+    public async Task<User?> GetUserById(string id)
     {
         var identityUser = await _userManager.FindByIdAsync(id.ToString());
-        if (identityUser == null)
-        {
-            return null;
-        }
 
-        return new UserDomain { 
-            Id = identityUser.Id,
-            Username = identityUser.UserName ?? string.Empty,
-            Email = identityUser.Email ?? string.Empty,
-            FirstName = identityUser.FirstName,
-            LastName = identityUser.LastName,
-            Address = identityUser.Address,
-            DateOfBirth = identityUser.DateOfBirth,
-            IsActive = identityUser.IsActive
-        };
+        return identityUser;
     }
-    public async Task CreateUser(UserDomain user, string password)
+    public async Task<bool> CreateUser(User user, string password)
     {
         var identityUser = new User
         {
             Id = user.Id,
-            UserName = user.Username,
+            UserName = user.UserName,
             Email = user.Email,
             FirstName = user.FirstName,
             LastName = user.LastName,
@@ -43,6 +30,8 @@ public class UserRepository : IUserRepository
             DateOfBirth = user.DateOfBirth,
             IsActive = user.IsActive
         };
-        await _userManager.CreateAsync(identityUser, password);
+        var identityResult = await _userManager.CreateAsync(identityUser, password);
+
+        return identityResult.Succeeded;
     }
 }

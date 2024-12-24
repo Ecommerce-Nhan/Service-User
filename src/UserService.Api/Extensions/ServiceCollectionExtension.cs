@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UserService.Api.Extensions;
+using UserService.Entities.Roles;
+using UserService.Entities.Users;
 using UserService.Infrastructure;
-using UserService.Infrastructure.IdentityEntities;
 
 namespace UserService.Api.Extentions;
 
