@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using UserService.Entities.Roles;
-using UserService.Entities.UserRoles;
-using UserService.Entities.Users;
+using UserService.Entities;
 
 namespace UserService.Infrastructure;
 

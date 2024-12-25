@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\UserService.Domain\UserService.Entities.csproj" />
+  </ItemGroup>
+
 </Project>

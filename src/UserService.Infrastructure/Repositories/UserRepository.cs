@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using UserService.Domain.Users;
-using UserService.Entities.Users;
+using UserService.Entities;
+using UserService.Entities.Abstractions;
 
 namespace UserService.Infrastructure.Repositories;
 
@@ -11,26 +11,15 @@ public class UserRepository : IUserRepository
     {
         _userManager = userManager;
     }
-    public async Task<User?> GetUserById(string id)
+    public async Task<User?> GetUserByIdAsync(string id)
     {
         var identityUser = await _userManager.FindByIdAsync(id.ToString());
 
         return identityUser;
     }
-    public async Task<bool> CreateUser(User user, string password)
+    public async Task<bool> CreateUserAsync(User user)
     {
-        var identityUser = new User
-        {
-            Id = user.Id,
-            UserName = user.UserName,
-            Email = user.Email,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Address = user.Address,
-            DateOfBirth = user.DateOfBirth,
-            IsActive = user.IsActive
-        };
-        var identityResult = await _userManager.CreateAsync(identityUser, password);
+        var identityResult = await _userManager.CreateAsync(user);
 
         return identityResult.Succeeded;
     }
