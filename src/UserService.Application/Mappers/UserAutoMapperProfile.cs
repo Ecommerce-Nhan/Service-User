@@ -3,9 +3,9 @@ using SharedLibrary.Wrappers;
 
 namespace UserService.Application.Mappers;
 
-public class ApplicationAutoMapperProfile : Profile
+public class UserAutoMapperProfile : Profile
 {
-    public ApplicationAutoMapperProfile()
+    public UserAutoMapperProfile()
     {
         /* You can configure your AutoMapper mapping configuration here.
          * Alternatively, you can split your mapping configurations

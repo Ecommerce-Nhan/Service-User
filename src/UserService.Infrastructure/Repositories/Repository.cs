@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using UserService.Domain.Abstractions;
+using SharedLibrary.Repositories.Abtractions;
 
 namespace UserService.Infrastructure.Repositories;
 

@@ -5,27 +5,16 @@ using UserService.Entities.Abstractions;
 
 namespace UserService.Infrastructure.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository(UserManager<User> userManager) : IUserRepository
 {
-    private readonly UserManager<User> _userManager;
-    public UserRepository(UserManager<User> userManager)
-    {
-        _userManager = userManager;
-    }
-    public async Task<User?> GetUserByIdAsync(string id)
-    {
-        var identityUser = await _userManager.FindByIdAsync(id.ToString());
-
-        return identityUser;
-    }
-    public async Task<bool> CreateUserAsync(User user)
-    {
-        var identityResult = await _userManager.CreateAsync(user);
-
-        return identityResult.Succeeded;
-    }
-    public async Task<IEnumerable<User>> GetAllAsync()
-    {
-        return await _userManager.Users.AsNoTracking().ToListAsync();
-    }
+    public async Task<IEnumerable<User>> GetAllAsync() =>
+        await userManager.Users.AsNoTracking().ToListAsync();
+    public async Task<User?> GetUserByIdAsync(string id) =>
+        await userManager.FindByIdAsync(id.ToString());
+    public async Task<IdentityResult> CreateUserAsync(User user) =>
+        await userManager.CreateAsync(user);
+    public async Task<IdentityResult> UpdateUserAsync(User user) =>
+        await userManager.UpdateAsync(user);
+    public async Task<IdentityResult> DeleteUserAsync(User user) =>
+        await userManager.DeleteAsync(user);
 }
