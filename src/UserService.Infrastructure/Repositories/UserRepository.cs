@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using UserService.Entities;
 using UserService.Entities.Abstractions;
 
@@ -22,5 +23,9 @@ public class UserRepository : IUserRepository
         var identityResult = await _userManager.CreateAsync(user);
 
         return identityResult.Succeeded;
+    }
+    public async Task<IEnumerable<User>> GetAllAsync()
+    {
+        return await _userManager.Users.AsNoTracking().ToListAsync();
     }
 }

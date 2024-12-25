@@ -13,6 +13,15 @@ public class UserService : IUserService
         _userRepository = userRepository;
     }
 
+    public async Task<IEnumerable<UserDto>> GetAll()
+    {
+        return 
+    }
+    public async Task<UserDto?> GetUserByIdAsync(string id)
+    {
+        var user = await _userRepository.GetUserByIdAsync(id);
+        return new UserDto(user.Id, user.FirstName, user.LastName, user.UserName, user.Address, user.Email, user.PhoneNumber, user.DateOfBirth);
+    }
     public async Task<bool> CreateUserAsync(CreateUserDto input)
     {
         var model = new User
@@ -28,11 +37,5 @@ public class UserService : IUserService
         };
 
         return await _userRepository.CreateUserAsync(model);
-    }
-
-    public async Task<UserDto?> GetUserByIdAsync(string id)
-    {
-        var user = await _userRepository.GetUserByIdAsync(id);
-        return new UserDto(user.Id, user.FirstName, user.LastName, user.UserName, user.Address, user.Email, user.PhoneNumber, user.DateOfBirth);
     }
 }

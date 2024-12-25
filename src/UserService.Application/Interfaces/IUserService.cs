@@ -4,6 +4,7 @@ namespace UserService.Application.Interfaces;
 
 public interface IUserService
 {
-    Task<bool> CreateUserAsync(CreateUserDto input);
+    Task<IEnumerable<UserDto>> GetAll();
     Task<UserDto?> GetUserByIdAsync(string id);
+    Task<bool> CreateUserAsync(CreateUserDto input);
 }
