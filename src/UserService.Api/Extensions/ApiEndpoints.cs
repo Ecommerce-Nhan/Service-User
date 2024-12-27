@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using UserService.Application.Interfaces;
+﻿using UserService.Application.Interfaces;
 using SharedLibrary.Dtos.Users;
 
 namespace UserService.Api.Extensions;
