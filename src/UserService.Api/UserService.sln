@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Entities", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Infrastructure", "..\UserService.Infrastructure\UserService.Infrastructure.csproj", "{EA40FBED-DC33-4A15-BB46-19799CA6DBBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Common", "..\UserService.Common\UserService.Common.csproj", "{F0269E0C-EFB5-4417-AAA5-2B041EDFBA98}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,10 +33,6 @@ Global
 		{EA40FBED-DC33-4A15-BB46-19799CA6DBBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA40FBED-DC33-4A15-BB46-19799CA6DBBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA40FBED-DC33-4A15-BB46-19799CA6DBBB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F0269E0C-EFB5-4417-AAA5-2B041EDFBA98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F0269E0C-EFB5-4417-AAA5-2B041EDFBA98}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F0269E0C-EFB5-4417-AAA5-2B041EDFBA98}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F0269E0C-EFB5-4417-AAA5-2B041EDFBA98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
