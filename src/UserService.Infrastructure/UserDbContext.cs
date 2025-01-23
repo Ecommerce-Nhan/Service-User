@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using UserService.Entities;
+using UserService.Infrastructure.Extensions;
 
 namespace UserService.Infrastructure;
 
@@ -18,6 +19,7 @@ public class UserDbContext : IdentityDbContext<User, Role, string,
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Seed();
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserDbContext).Assembly);
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
