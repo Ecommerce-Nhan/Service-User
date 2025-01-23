@@ -1,0 +1,32 @@
+name: user-service
+services:
+  api:
+    image: user-service-api:latest
+    container_name: Api
+    build:
+        context: .
+        dockerfile: Dockerfile
+        # args:
+        #   GITHUB_USERNAME: ######
+        #   GITHUB_TOKEN: ############################
+    ports:
+      - "8080:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: postgres:latest
+    container_name: Database
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: userDB
+    ports:
+      - "5436:5432"
+    # volumes:
+    #   - D:\Docker\Data\Postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
