@@ -1,11 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
+using SharedLibrary.Dtos.Users;
+using SharedLibrary.Exceptions;
 using SharedLibrary.Extentions;
 using SharedLibrary.Repositories.Abtractions;
 using System;
 using UserService.Api.Extentions;
 using UserService.Application.Interfaces;
 using UserService.Application.Mappers;
+using UserService.Application.Validations;
 using UserService.Entities.Abstractions;
 using UserService.Infrastructure;
 using UserService.Infrastructure.Repositories;
@@ -25,10 +29,11 @@ internal static class HostingExtensions
         builder.Services.AddCustomIdentity();
         builder.Services.AddRedisCacheConfiguration();
         builder.Services.AddAutoMapper(typeof(UserAutoMapperProfile).Assembly);
-        builder.Services.AddHandleException();
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, MainService>();
+        builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
 
         return builder.Build();
     }
@@ -52,7 +57,7 @@ internal static class HostingExtensions
             });
         }
 
-        app.UseExceptionHandler();
+        app.UseExceptionHandler("/error");
         app.UseSerilogRequestLogging();
         app.UseHttpsRedirection();
 
