@@ -38,7 +38,6 @@ public class UserService(IUserRepository userRepository, IMapper mapper) : IUser
         var identityResult = await userRepository.CreateUserAsync(model);
         return identityResult.Succeeded;
     }
-
     public async Task<bool> UpdateUserAsync(string id, UpdateUserDto input)
     {
         var user = await userRepository.GetUserByIdAsync(id);
@@ -57,7 +56,6 @@ public class UserService(IUserRepository userRepository, IMapper mapper) : IUser
         var identityResult = await userRepository.UpdateUserAsync(user);
         return identityResult.Succeeded;
     }
-
     public async Task<bool> DeleteUserAsync(string id)
     {
         var user = await userRepository.GetUserByIdAsync(id);

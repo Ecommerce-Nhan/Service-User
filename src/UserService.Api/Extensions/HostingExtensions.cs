@@ -7,6 +7,7 @@ using SharedLibrary.Exceptions;
 using SharedLibrary.Extentions;
 using SharedLibrary.Repositories.Abtractions;
 using UserService.Api.Extentions;
+using UserService.Application.GrpcServices;
 using UserService.Application.Interfaces;
 using UserService.Application.Mappers;
 using UserService.Application.Validations;
@@ -37,6 +38,7 @@ internal static class HostingExtensions
         builder.Services.AddCustomIdentity();
         builder.Services.AddRedisCacheConfiguration();
         builder.Services.AddAutoMapper(typeof(UserAutoMapperProfile).Assembly);
+        builder.Services.AddGrpc();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -68,6 +70,7 @@ internal static class HostingExtensions
         app.UseExceptionHandler("/error");
         app.UseSerilogRequestLogging();
         app.UseHttpsRedirection();
+        app.MapGrpcService<UserGrpcService>();
 
         return app;
     }
