@@ -3,6 +3,7 @@ using SharedLibrary.Dtos.Users;
 using UserService.Entities;
 using UserService.Entities.Abstractions;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 
 namespace UserService.Application.Implements;
 
@@ -23,6 +24,7 @@ public class UserService(IUserRepository userRepository, IMapper mapper) : IUser
     }
     public async Task<bool> CreateUserAsync(CreateUserDto input)
     {
+        var hasher = new PasswordHasher<User>();
         var model = new User
         {
             UserName = input.UserName,
@@ -34,6 +36,7 @@ public class UserService(IUserRepository userRepository, IMapper mapper) : IUser
             DateOfBirth = input.DateOfBirth,
             IsActive = false
         };
+        model.PasswordHash = hasher.HashPassword(model, input.Password);
 
         var identityResult = await userRepository.CreateUserAsync(model);
         return identityResult.Succeeded;
