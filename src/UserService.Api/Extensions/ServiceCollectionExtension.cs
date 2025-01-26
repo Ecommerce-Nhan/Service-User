@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using UserService.Api.Extensions;
 using UserService.Entities;
 using UserService.Infrastructure;
+using UserService.Infrastructure.Seeds;
 
 namespace UserService.Api.Extentions;
 
@@ -43,6 +44,7 @@ public static class ServiceCollectionExtension
         .AddTokenProvider<EmailConfirmationTokenProvider<User>>("emailconfirmation");
         services.Configure<EmailConfirmationTokenProviderOptions>(opt => opt.TokenLifespan = TimeSpan.FromDays(1));
         services.Configure<DataProtectionTokenProviderOptions>(x => x.TokenLifespan = TimeSpan.FromDays(1));
+        services.AddHostedService<SeedWorker>();
 
         return services;
     }
