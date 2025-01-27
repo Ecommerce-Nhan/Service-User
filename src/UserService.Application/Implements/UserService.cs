@@ -34,11 +34,12 @@ public class UserService(IUserRepository userRepository, IMapper mapper) : IUser
             LastName = input.LastName,
             Address = input.Address,
             DateOfBirth = input.DateOfBirth,
-            IsActive = false
+            IsActive = false,
+            PhoneNumberConfirmed = false,
+            EmailConfirmed = false
         };
-        model.PasswordHash = hasher.HashPassword(model, input.Password);
 
-        var identityResult = await userRepository.CreateUserAsync(model);
+        var identityResult = await userRepository.CreateUserAsync(model, input.Password);
         return identityResult.Succeeded;
     }
     public async Task<bool> UpdateUserAsync(string id, UpdateUserDto input)

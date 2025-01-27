@@ -11,8 +11,8 @@ public class UserRepository(UserManager<User> userManager) : IUserRepository
         await userManager.Users.AsNoTracking().ToListAsync();
     public async Task<User?> GetUserByIdAsync(string id) =>
         await userManager.FindByIdAsync(id.ToString());
-    public async Task<IdentityResult> CreateUserAsync(User user) =>
-        await userManager.CreateAsync(user);
+    public async Task<IdentityResult> CreateUserAsync(User user, string password) =>
+        await userManager.CreateAsync(user, password);
     public async Task<IdentityResult> UpdateUserAsync(User user) =>
         await userManager.UpdateAsync(user);
     public async Task<IdentityResult> DeleteUserAsync(User user) =>
