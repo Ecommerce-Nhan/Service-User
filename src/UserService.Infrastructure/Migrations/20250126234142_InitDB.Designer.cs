@@ -12,8 +12,8 @@ using UserService.Infrastructure;
 namespace UserService.Infrastructure.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20241227033140_SeedRole")]
-    partial class SeedRole
+    [Migration("20250126234142_InitDB")]
+    partial class InitDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -157,41 +157,6 @@ namespace UserService.Infrastructure.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("Roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "8D04DCE2-969A-435D-BBA4-DF3F325983DC",
-                            CreatedBy = "",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false,
-                            Name = "Admin",
-                            NormalizedName = "ADMIN",
-                            UpdatedBy = "",
-                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = "1B3D7E19-B1A5-4CA2-A491-54593FA16531",
-                            CreatedBy = "",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false,
-                            Name = "Client",
-                            NormalizedName = "CLIENT",
-                            UpdatedBy = "",
-                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = "5603EB1E-A44D-4C72-9BD5-6546BB750045",
-                            CreatedBy = "",
-                            CreatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            IsActive = false,
-                            Name = "Employee",
-                            NormalizedName = "EMPLOYEE",
-                            UpdatedBy = "",
-                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("UserService.Entities.User", b =>
@@ -210,8 +175,9 @@ namespace UserService.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.Property<bool>("CreateBy")
-                        .HasColumnType("boolean");
+                    b.Property<string>("CreateBy")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("CreateDate")
                         .HasColumnType("boolean");
@@ -219,8 +185,9 @@ namespace UserService.Infrastructure.Migrations
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("DeleteBy")
-                        .HasColumnType("boolean");
+                    b.Property<string>("DeleteBy")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
