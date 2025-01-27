@@ -13,7 +13,9 @@ public static class DefaultUsers
         {
             UserName = "basicuser@gmail.com",
             Email = "basicuser@gmail.com",
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            PhoneNumberConfirmed = true,
+            IsActive = true
         };
         if (userManager.Users.All(u => u.Id != defaultUser.Id))
         {
@@ -31,7 +33,9 @@ public static class DefaultUsers
         {
             UserName = "superadmin@gmail.com",
             Email = "superadmin@gmail.com",
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            PhoneNumberConfirmed = true,
+            IsActive = true
         };
         if (userManager.Users.All(u => u.Id != defaultUser.Id))
         {
