@@ -32,6 +32,7 @@ internal static class HostingExtensions
     {
         builder.Host.UseSerilog();
 
+        builder.Services.AddJWT(builder.Configuration);
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddDatabaseConfiguration(builder.Configuration);
@@ -44,13 +45,12 @@ internal static class HostingExtensions
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, MainService>();
         builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
+        builder.Services.AddAuthorization();
 
         return builder.Build();
     }
     public static WebApplication ConfigurePipeline(this WebApplication app, WebApplicationBuilder builder)
     {
-        app.MapUserEndpoints();
-
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
@@ -69,8 +69,11 @@ internal static class HostingExtensions
 
         app.UseExceptionHandler("/error");
         app.UseSerilogRequestLogging();
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.UseHttpsRedirection();
         app.MapGrpcService<UserGrpcService>();
+        app.MapUserEndpoints();
 
         return app;
     }
