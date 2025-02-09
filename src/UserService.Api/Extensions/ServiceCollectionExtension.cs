@@ -73,7 +73,7 @@ public static class ServiceCollectionExtension
                 ClockSkew = TimeSpan.Zero,
 
                 ValidIssuer = "https://localhost:5001/",
-                ValidAudience = "b865bfc2-9966-4309-93be-f0dcd2d7c59b",
+                ValidAudience = "14c72d0b-7967-4203-8cd2-c42683ed743d",
                 IssuerSigningKey = key,
             };
         });

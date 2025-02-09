@@ -3,6 +3,9 @@ using SharedLibrary.Dtos.Users;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using UserService.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace UserService.Api.Extensions;
 
@@ -11,19 +14,19 @@ public static class ApiEndpointExtension
     public static void MapUserEndpoints(this WebApplication app)
     {
         string endpoint = "/user";
-        app.MapGet(endpoint, [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] async (IUserService service) =>
-        await service.GetAll());
+        var userGroup = app.MapGroup(endpoint).RequireAuthorization(JwtBearerDefaults.AuthenticationScheme);
+        userGroup.MapGet("/", async (IUserService service) => await service.GetAll());
 
-        app.MapGet($"{endpoint}/{{id}}", [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] async (string id, IUserService service) =>
+        userGroup.MapGet("/{id}", async (string id, IUserService service) =>
             Results.Ok(await service.GetUserByIdAsync(id)));
 
-        app.MapPost(endpoint, [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] async (CreateUserDto input, IUserService service) =>
+        userGroup.MapPost("/", async (CreateUserDto input, IUserService service) =>
             Results.Ok(await service.CreateUserAsync(input)));
 
-        app.MapPut(endpoint, [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] async (string id, UpdateUserDto input, IUserService service) =>
+        userGroup.MapPut("/", async (string id, UpdateUserDto input, IUserService service) =>
             Results.Ok(await service.UpdateUserAsync(id, input)));
 
-        app.MapDelete($"{endpoint}/{{id}}", [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] async (string id, IUserService service) =>
+        userGroup.MapDelete("/{id}", async (string id, IUserService service) =>
             Results.Ok(await service.DeleteUserAsync(id)));
 
         app.MapGet("/profile", (HttpContext httpContext) =>
@@ -42,5 +45,12 @@ public static class ApiEndpointExtension
 
             return Results.Unauthorized();
         });
+    }
+
+    public static void MapRoleEndpoints(this WebApplication app)
+    {
+        string endpoint = "/role";
+        app.MapGet(endpoint, [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] async (RoleManager<Role> roleManager) =>
+                   await roleManager.Roles.ToListAsync());
     }
 }

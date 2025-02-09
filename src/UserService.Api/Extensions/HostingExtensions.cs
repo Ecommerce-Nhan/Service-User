@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Debugging;
@@ -45,7 +47,13 @@ internal static class HostingExtensions
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, MainService>();
         builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
-        builder.Services.AddAuthorization();
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Bearer", policy =>
+                policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                      .RequireAuthenticatedUser());
+        });
+
 
         return builder.Build();
     }
