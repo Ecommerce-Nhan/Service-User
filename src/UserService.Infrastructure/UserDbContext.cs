@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using UserService.Entities;
-using UserService.Infrastructure.Extensions;
 
 namespace UserService.Infrastructure;
 

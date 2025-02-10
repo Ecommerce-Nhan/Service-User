@@ -43,13 +43,12 @@ internal static class HostingExtensions
         builder.Services.AddAutoMapper(typeof(UserAutoMapperProfile).Assembly);
         builder.Services.AddGrpc();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, MainService>();
         builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
         builder.Services.AddAuthorization(options =>
         {
-            options.AddPolicy("Bearer", policy =>
+            options.AddPolicy(JwtBearerDefaults.AuthenticationScheme, policy =>
                 policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                       .RequireAuthenticatedUser());
         });
