@@ -13,7 +13,7 @@ public static class ApiEndpointExtension
 {
     public static void MapUserEndpoints(this WebApplication app)
     {
-        string endpoint = "/user";
+        string endpoint = "/api/user";
         var userGroup = app.MapGroup(endpoint).RequireAuthorization(JwtBearerDefaults.AuthenticationScheme);
         userGroup.MapGet("/", async (IUserService service) => await service.GetAll());
 
