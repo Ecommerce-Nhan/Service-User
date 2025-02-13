@@ -1,13 +1,12 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 using Serilog;
 using Serilog.Debugging;
 using SharedLibrary.Dtos.Users;
 using SharedLibrary.Exceptions;
 using SharedLibrary.Extentions;
-using SharedLibrary.Repositories.Abtractions;
 using UserService.Api.Extentions;
 using UserService.Application.GrpcServices;
 using UserService.Application.Interfaces;
@@ -36,7 +35,6 @@ internal static class HostingExtensions
 
         builder.Services.AddJWT(builder.Configuration);
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
         builder.Services.AddDatabaseConfiguration(builder.Configuration);
         builder.Services.AddCustomIdentity();
         builder.Services.AddRedisCacheConfiguration();
@@ -48,11 +46,12 @@ internal static class HostingExtensions
         builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
         builder.Services.AddAuthorization(options =>
         {
-            options.AddPolicy(JwtBearerDefaults.AuthenticationScheme, policy =>
-                policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                      .RequireAuthenticatedUser());
+            options.AddPolicy(JwtBearerDefaults.AuthenticationScheme,
+                              policy =>
+                              policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                                    .RequireAuthenticatedUser());
         });
-
+        builder.Services.AddOpenApi();
 
         return builder.Build();
     }
@@ -67,10 +66,14 @@ internal static class HostingExtensions
 
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
+            app.MapOpenApi();
+            app.MapScalarApiReference(options =>
             {
-                options.DisplayRequestDuration();
+                options
+                .WithTheme(ScalarTheme.Kepler)
+                .WithDarkModeToggle(true)
+                .WithClientButton(true)
+                .WithTitle("User service API");
             });
         }
 
