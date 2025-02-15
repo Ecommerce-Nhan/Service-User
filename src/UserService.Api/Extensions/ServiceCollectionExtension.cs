@@ -67,13 +67,13 @@ public static class ServiceCollectionExtension
             o.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                ValidateIssuer = true,
-                ValidateAudience = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero,
 
-                ValidIssuer = "https://localhost:5001/",
-                ValidAudience = "a6c18d2e-4413-436a-93d3-cc4363f3944d",
+                //ValidIssuer = "https://localhost:5001/",
+                //ValidAudience = "388D45FA-B36B-4988-BA59-B187D329C207",
                 IssuerSigningKey = key,
             };
         });
