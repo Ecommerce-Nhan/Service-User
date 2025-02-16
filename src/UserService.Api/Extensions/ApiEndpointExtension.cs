@@ -29,7 +29,7 @@ public static class ApiEndpointExtension
         userGroup.MapDelete("/{id}", async (string id, IUserService service) =>
             Results.Ok(await service.DeleteUserAsync(id)));
 
-        app.MapGet("/profile", (HttpContext httpContext) =>
+        userGroup.MapGet("/profile", (HttpContext httpContext) =>
         {
             if (httpContext.User.Identity?.IsAuthenticated == true)
             {
