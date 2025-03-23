@@ -1,19 +1,23 @@
-﻿using UserService.Application.Interfaces;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using SharedLibrary.Dtos.Products;
 using SharedLibrary.Dtos.Users;
+using SharedLibrary.Filters;
+using SharedLibrary.Wrappers;
+using UserService.Application.Interfaces;
 using UserService.Entities;
 using UserService.Entities.Abstractions;
-using AutoMapper;
-using Microsoft.AspNetCore.Identity;
 
 namespace UserService.Application.Implements;
 
 public class UserService(IUserRepository userRepository, IMapper mapper) : IUserService
 {
-    public async Task<IEnumerable<UserDto>> GetAll()
+    public async Task<PagedResponse<List<UserDto>>> GetAll(PaginationFilter pagination)
     {
-        var result = await userRepository.GetAllAsync();
+        var pagedData = await userRepository.GetAllAsync(pagination);
+        var result = mapper.Map<PagedResponse<List<UserDto>>>(pagedData);
 
-        return mapper.Map<IEnumerable<UserDto>>(result);
+        return result;
     }
     public async Task<UserDto?> GetUserByIdAsync(string id)
     {

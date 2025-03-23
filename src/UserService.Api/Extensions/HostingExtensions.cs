@@ -38,7 +38,7 @@ internal static class HostingExtensions
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddDatabaseConfiguration(builder.Configuration);
         builder.Services.AddCustomIdentity();
-        builder.Services.AddRedisCacheConfiguration();
+        builder.Services.AddRedis();
         builder.Services.AddAutoMapper(typeof(UserAutoMapperProfile).Assembly);
         builder.Services.AddGrpc();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

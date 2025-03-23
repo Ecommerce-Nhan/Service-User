@@ -1,11 +1,12 @@
-﻿using UserService.Application.Interfaces;
-using SharedLibrary.Dtos.Users;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using UserService.Entities;
 using Microsoft.EntityFrameworkCore;
+using SharedLibrary.Dtos.Users;
+using SharedLibrary.Filters;
+using System.Security.Claims;
+using UserService.Application.Interfaces;
+using UserService.Entities;
 
 namespace UserService.Api.Extensions;
 
@@ -15,7 +16,9 @@ public static class ApiEndpointExtension
     {
         string endpoint = "/api/user";
         var userGroup = app.MapGroup(endpoint).RequireAuthorization(JwtBearerDefaults.AuthenticationScheme);
-        userGroup.MapGet("/", async (IUserService service) => await service.GetAll());
+
+        userGroup.MapGet("/", async (IUserService service, [AsParameters] PaginationFilter pagination)
+                              => await service.GetAll(pagination));
 
         userGroup.MapGet("/{id}", async (string id, IUserService service) =>
             Results.Ok(await service.GetUserByIdAsync(id)));

@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using UserService.Entities;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
 
 namespace UserService.Infrastructure.Seeds;
 
@@ -27,6 +29,18 @@ public class SeedWorker : IHostedService
         {
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+
+            var role = "SuperAdmin";
+            var permissions = new HashSet<string>
+            {
+                "Permissions.Users.Read",
+                "Permissions.Users.Create",
+                "Permissions.Products.Read",
+                "Permissions.Products.Create"
+            };
+            var cache = scope.ServiceProvider.GetRequiredService<IDistributedCache>();
+            await cache.SetStringAsync($"role_permissions:{role}", JsonSerializer.Serialize(permissions));
+
             await Seeds.DefaultRoles.SeedAsync(userManager, roleManager);
             await Seeds.DefaultUsers.SeedBasicUserAsync(userManager, roleManager);
             await Seeds.DefaultUsers.SeedSuperAdminAsync(userManager, roleManager);
