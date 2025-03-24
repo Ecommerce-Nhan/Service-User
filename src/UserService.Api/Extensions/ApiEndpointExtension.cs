@@ -17,8 +17,10 @@ public static class ApiEndpointExtension
         string endpoint = "/api/user";
         var userGroup = app.MapGroup(endpoint).RequireAuthorization(JwtBearerDefaults.AuthenticationScheme);
 
-        userGroup.MapGet("/", async (IUserService service, [AsParameters] PaginationFilter pagination)
-                              => await service.GetAll(pagination));
+        userGroup.MapGet("/", async (IUserService service, [AsParameters] PaginationFilter? pagination) => {
+            pagination ??= new PaginationFilter();
+            return await service.GetAll(pagination);
+        });
 
         userGroup.MapGet("/{id}", async (string id, IUserService service) =>
             Results.Ok(await service.GetUserByIdAsync(id)));

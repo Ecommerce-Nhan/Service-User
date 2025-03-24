@@ -30,13 +30,13 @@ public class SeedWorker : IHostedService
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
 
-            var role = "SuperAdmin";
+            var role = "Admin";
             var permissions = new HashSet<string>
             {
-                "Permissions.Users.Read",
-                "Permissions.Users.Create",
-                "Permissions.Products.Read",
-                "Permissions.Products.Create"
+                "Permissions.User.View",
+                "Permissions.User.Create",
+                "Permissions.Product.View",
+                "Permissions.Product.Create"
             };
             var cache = scope.ServiceProvider.GetRequiredService<IDistributedCache>();
             await cache.SetStringAsync($"role_permissions:{role}", JsonSerializer.Serialize(permissions));
