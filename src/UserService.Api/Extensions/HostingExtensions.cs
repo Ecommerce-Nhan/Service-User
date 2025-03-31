@@ -1,6 +1,6 @@
-﻿using FluentValidation;
+﻿using Asp.Versioning;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
@@ -8,6 +8,7 @@ using Serilog.Debugging;
 using SharedLibrary.Dtos.Users;
 using SharedLibrary.Exceptions;
 using SharedLibrary.Extentions;
+using UserService.Api.Apis;
 using UserService.Api.Extentions;
 using UserService.Application.GrpcServices;
 using UserService.Application.Interfaces;
@@ -53,6 +54,16 @@ internal static class HostingExtensions
                                     .RequireAuthenticatedUser());
         });
         builder.Services.AddOpenApi();
+        builder.Services.AddApiVersioning(
+            opts =>
+            {
+                opts.ReportApiVersions = true;
+                opts.ApiVersionReader = ApiVersionReader.Combine(
+                    new UrlSegmentApiVersionReader(),
+                    new HeaderApiVersionReader("X-Version")
+                );
+            }
+        );
 
         return builder.Build();
     }
@@ -84,6 +95,7 @@ internal static class HostingExtensions
         app.UseAuthorization();
         app.UseHttpsRedirection();
         app.MapGrpcService<UserGrpcService>();
+        //app.MapUserEndpoints();
         app.MapUserEndpoints();
 
         return app;

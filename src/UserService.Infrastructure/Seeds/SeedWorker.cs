@@ -30,20 +30,10 @@ public class SeedWorker : IHostedService
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
 
-            var role = "SuperAdmin";
-            var permissions = new HashSet<string>
-            {
-                "Permissions.Users.Read",
-                "Permissions.Users.Create",
-                "Permissions.Products.Read",
-                "Permissions.Products.Create"
-            };
-            var cache = scope.ServiceProvider.GetRequiredService<IDistributedCache>();
-            await cache.SetStringAsync($"role_permissions:{role}", JsonSerializer.Serialize(permissions));
-
             await Seeds.DefaultRoles.SeedAsync(userManager, roleManager);
             await Seeds.DefaultUsers.SeedBasicUserAsync(userManager, roleManager);
             await Seeds.DefaultUsers.SeedSuperAdminAsync(userManager, roleManager);
+            await SeedRoleToCache(roleManager);
             logger.LogInformation("Finished Seeding Default Data");
             logger.LogInformation("Application Starting");
         }
@@ -54,4 +44,22 @@ public class SeedWorker : IHostedService
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+    private async Task SeedRoleToCache(RoleManager<Role> roleManager)
+    {
+        var cache = _serviceProvider.GetRequiredService<IDistributedCache>();
+        var roles = roleManager.Roles.ToList();
+        foreach (var role in roles)
+        {
+            var claims = await roleManager.GetClaimsAsync(role);
+            var permissions = claims
+                .Where(c => c.Type == "Permission")
+                .Select(c => c.Value)
+                .ToHashSet();
+
+            await cache.SetStringAsync(
+                $"role_permissions:{role.Name}",
+                JsonSerializer.Serialize(permissions)
+            );
+        }
+    }
 }
