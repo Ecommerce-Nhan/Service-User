@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using SharedLibrary.Dtos.Products;
 using SharedLibrary.Dtos.Users;
 using SharedLibrary.Filters;
 using SharedLibrary.Wrappers;
