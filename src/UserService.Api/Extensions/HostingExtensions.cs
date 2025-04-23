@@ -10,6 +10,7 @@ using SharedLibrary.Exceptions;
 using SharedLibrary.Extentions;
 using UserService.Api.Apis;
 using UserService.Api.Extentions;
+using UserService.Application;
 using UserService.Application.GrpcServices;
 using UserService.Application.Interfaces;
 using UserService.Application.Mappers;
@@ -95,7 +96,6 @@ internal static class HostingExtensions
         app.UseAuthorization();
         app.UseHttpsRedirection();
         app.MapGrpcService<UserGrpcService>();
-        //app.MapUserEndpoints();
         app.MapUserEndpoints();
 
         return app;
