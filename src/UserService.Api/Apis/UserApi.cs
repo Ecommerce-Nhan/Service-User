@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using SharedLibrary.Dtos.Users;
 using SharedLibrary.Filters;
-using System.Security.Claims;
 using UserService.Application.Interfaces;
 
 namespace UserService.Api.Apis;
@@ -15,13 +14,19 @@ public static partial class ApiEndpointExtension
                      .RequireAuthorization(JwtBearerDefaults.AuthenticationScheme)
                      .HasApiVersion(1, 0);
 
-        v1.MapGet("/", GetUsers);
-        v1.MapPost("/", CreateUser);
-        v1.MapGet("/{id}", GetUserById);
-        v1.MapPut("/{id}", UpdateUser);
-        v1.MapDelete("/{id}", DeleteUser);
+        v1.MapGet("/", GetUsers).WithNameAndSummary(GetUsers);
+        v1.MapGet("/{id}", GetUserById).WithNameAndSummary(GetUserById);
+        v1.MapPost("/", CreateUser).WithNameAndSummary(CreateUser);
+        v1.MapPut("/", UpdateUser).WithNameAndSummary(UpdateUser);
+        v1.MapDelete("/{id}", DeleteUser).WithNameAndSummary(DeleteUser);
 
         return builder;
+    }
+
+    private static RouteHandlerBuilder WithNameAndSummary(this RouteHandlerBuilder builder, Delegate handler)
+    {
+        var name = handler.Method.Name;
+        return builder.WithName(name).WithSummary(name);
     }
 
     private static async Task<IResult> GetUsers(

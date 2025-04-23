@@ -6,8 +6,6 @@ using Scalar.AspNetCore;
 using Serilog;
 using Serilog.Debugging;
 using SharedLibrary.Dtos.Users;
-using SharedLibrary.Exceptions;
-using SharedLibrary.Extentions;
 using UserService.Api.Apis;
 using UserService.Api.Extentions;
 using UserService.Application;
