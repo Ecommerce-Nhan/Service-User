@@ -1,6 +1,5 @@
 ﻿using Asp.Versioning;
 using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
@@ -13,9 +12,7 @@ using UserService.Application.GrpcServices;
 using UserService.Application.Interfaces;
 using UserService.Application.Mappers;
 using UserService.Application.Validations;
-using UserService.Entities.Abstractions;
 using UserService.Infrastructure;
-using UserService.Infrastructure.Repositories;
 using MainService = UserService.Application.Implements.UserService;
 
 namespace UserService.Api.Extensions;
@@ -34,7 +31,6 @@ internal static class HostingExtensions
     {
         builder.Host.UseSerilog();
 
-        builder.Services.AddJWT(builder.Configuration);
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddDatabaseConfiguration(builder.Configuration);
         builder.Services.AddCustomIdentity();
@@ -42,16 +38,8 @@ internal static class HostingExtensions
         builder.Services.AddAutoMapper(typeof(UserAutoMapperProfile).Assembly);
         builder.Services.AddGrpc();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserService, MainService>();
         builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
-        builder.Services.AddAuthorization(options =>
-        {
-            options.AddPolicy(JwtBearerDefaults.AuthenticationScheme,
-                              policy =>
-                              policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-                                    .RequireAuthenticatedUser());
-        });
         builder.Services.AddOpenApi();
         builder.Services.AddApiVersioning(
             opts =>
@@ -90,8 +78,6 @@ internal static class HostingExtensions
 
         app.UseExceptionHandler("/error");
         app.UseSerilogRequestLogging();
-        app.UseAuthentication();
-        app.UseAuthorization();
         app.UseHttpsRedirection();
         app.MapGrpcService<UserGrpcService>();
         app.MapUserEndpoints();

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UserService.Entities;
 
@@ -11,7 +10,6 @@ public static partial class ApiEndpointExtension
     {
         var vApi = builder.NewVersionedApi("User");
         var v1 = vApi.MapGroup("api/v{version.apiVersion}/user/role")
-                     .RequireAuthorization(JwtBearerDefaults.AuthenticationScheme)
                      .HasApiVersion(1, 0);
         v1.MapGet("/", GetRoles);
 

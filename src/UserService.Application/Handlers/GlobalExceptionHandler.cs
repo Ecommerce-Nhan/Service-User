@@ -15,7 +15,7 @@ public class GlobalExceptionHandler : IExceptionHandler
     {
         var response = new Response<object>();
         response.Succeeded = false;
-        response.Data = null;
+        response.Data = default!;
         response.Message = "Something went wrong";
         response.Errors = new[] { exception.Message };
         httpContext.Response.StatusCode = exception is BaseException e
