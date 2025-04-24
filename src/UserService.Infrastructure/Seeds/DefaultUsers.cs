@@ -53,7 +53,13 @@ public static class DefaultUsers
     private async static Task SeedClaimsForSuperAdmin(this RoleManager<Role> roleManager)
     {
         var adminRole = await roleManager.FindByNameAsync("SuperAdmin");
-        await roleManager.AddPermissionClaim(adminRole, "Products");
+        if (adminRole is Role)
+        {
+            await roleManager.AddPermissionClaim(adminRole, "Product");
+            await roleManager.AddPermissionClaim(adminRole, "User");
+            await roleManager.AddPermissionClaim(adminRole, "Role");
+            await roleManager.AddPermissionClaim(adminRole, "RoleClaim");
+        }
     }
     public static async Task AddPermissionClaim(this RoleManager<Role> roleManager, Role role, string module)
     {

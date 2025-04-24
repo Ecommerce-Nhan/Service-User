@@ -45,7 +45,7 @@ public class UserGrpcService(SignInManager<User> signInManager, UserManager<User
         }
         var response = new LoginModel();
         response.UserId = user.Id;
-        response.UserRole = roleUser.FirstOrDefault();
+        response.UserRole.AddRange(roleUser);
         
         return response;
     }

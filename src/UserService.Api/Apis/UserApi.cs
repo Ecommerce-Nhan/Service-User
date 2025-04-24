@@ -10,7 +10,7 @@ public static partial class ApiEndpointExtension
     public static IEndpointRouteBuilder MapUserEndpoints(this IEndpointRouteBuilder builder)
     {
         var vApi = builder.NewVersionedApi("User");
-        var v1 = vApi.MapGroup("api/v{version.apiVersion}/user")
+        var v1 = vApi.MapGroup("api/v{version:apiVersion}/user")
                      .RequireAuthorization(JwtBearerDefaults.AuthenticationScheme)
                      .HasApiVersion(1, 0);
 
@@ -30,9 +30,10 @@ public static partial class ApiEndpointExtension
     }
 
     private static async Task<IResult> GetUsers(
-        IUserService service,
-        [AsParameters] PaginationFilter pagination)
-        => Results.Ok(await service.GetAll(pagination));
+        IUserService service)
+    {
+        return Results.Ok(await service.GetAll(new PaginationFilter()));
+    }
 
     private static async Task<IResult> GetUserById(string id, IUserService service)
         => Results.Ok(await service.GetUserByIdAsync(id));
