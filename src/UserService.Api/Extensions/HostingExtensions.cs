@@ -76,9 +76,7 @@ internal static class HostingExtensions
             });
         }
 
-        app.UseExceptionHandler("/error");
         app.UseSerilogRequestLogging();
-        app.UseHttpsRedirection();
         app.MapGrpcService<UserGrpcService>();
         app.MapUserEndpoints();
 

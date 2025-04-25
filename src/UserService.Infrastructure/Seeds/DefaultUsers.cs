@@ -47,20 +47,24 @@ public static class DefaultUsers
                 await userManager.AddToRoleAsync(defaultUser, Roles.Admin.ToString());
                 await userManager.AddToRoleAsync(defaultUser, Roles.SuperAdmin.ToString());
             }
-            await roleManager.SeedClaimsForSuperAdmin();
+            await roleManager.SeedClaimsForAdmin();
         }
     }
-    private async static Task SeedClaimsForSuperAdmin(this RoleManager<Role> roleManager)
+
+    private async static Task SeedClaimsForAdmin(this RoleManager<Role> roleManager)
     {
-        var adminRole = await roleManager.FindByNameAsync("SuperAdmin");
-        if (adminRole is Role)
+        var adminRole = await roleManager.FindByNameAsync("Admin");
+        var superAdminRole = await roleManager.FindByNameAsync("SuperAdmin");
+        if (superAdminRole is Role && adminRole is Role)
         {
             await roleManager.AddPermissionClaim(adminRole, "Product");
-            await roleManager.AddPermissionClaim(adminRole, "User");
-            await roleManager.AddPermissionClaim(adminRole, "Role");
-            await roleManager.AddPermissionClaim(adminRole, "RoleClaim");
+            await roleManager.AddPermissionClaim(superAdminRole, "Product");
+            await roleManager.AddPermissionClaim(superAdminRole, "User");
+            await roleManager.AddPermissionClaim(superAdminRole, "Role");
+            await roleManager.AddPermissionClaim(superAdminRole, "RoleClaim");
         }
     }
+
     public static async Task AddPermissionClaim(this RoleManager<Role> roleManager, Role role, string module)
     {
         var allClaims = await roleManager.GetClaimsAsync(role);

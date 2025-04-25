@@ -31,22 +31,25 @@ public class UserGrpcService(SignInManager<User> signInManager, UserManager<User
         {
             throw new RpcException(new Status(StatusCode.PermissionDenied, "User does not have any assigned roles."));
         }
-        var roles = roleUser.Select(role => new Claim(ClaimTypes.Role, role));
 
         var roleClaims = new List<Claim>();
+        var permissionClaims = new List<Claim>();
         foreach (var role in roleUser)
         {
-            var roleEntity = await roleManager.FindByNameAsync(role);
-            if (roleEntity != null)
+            roleClaims.Add(new Claim(ClaimTypes.Role, role));
+            var thisRole = await roleManager.FindByNameAsync(role);
+            if (thisRole != null)
             {
-                var claims = await roleManager.GetClaimsAsync(roleEntity);
-                roleClaims.AddRange(claims);
+                var allPermissionsForThisRoles = await roleManager.GetClaimsAsync(thisRole);
+                permissionClaims.AddRange(allPermissionsForThisRoles);
             }
         }
+
         var response = new LoginModel();
         response.UserId = user.Id;
-        response.UserRole.AddRange(roleUser);
-        
+        response.UserRole = string.Join(", ", roleUser);
+        response.UserPermission = string.Join(", ", permissionClaims.Select(x => x.Value).Distinct());
+
         return response;
     }
 }
