@@ -79,6 +79,7 @@ internal static class HostingExtensions
         app.UseSerilogRequestLogging();
         app.MapGrpcService<UserGrpcService>();
         app.MapUserEndpoints();
+        app.MapRoleEndpoints();
 
         return app;
     }

@@ -5,7 +5,7 @@ using SharedLibrary.Dtos.Users;
 using SharedLibrary.Filters;
 using SharedLibrary.Wrappers;
 using UserService.Application.Interfaces;
-using UserService.Entities;
+using UserService.Domains.Entities;
 
 namespace UserService.Application.Implements;
 

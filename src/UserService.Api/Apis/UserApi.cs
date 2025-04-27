@@ -21,12 +21,6 @@ public static partial class ApiEndpointExtension
         return builder;
     }
 
-    private static RouteHandlerBuilder WithNameAndSummary(this RouteHandlerBuilder builder, Delegate handler)
-    {
-        var name = handler.Method.Name;
-        return builder.WithName(name).WithSummary(name);
-    }
-
     private static async Task<IResult> GetUsers(
         IUserService service)
     {

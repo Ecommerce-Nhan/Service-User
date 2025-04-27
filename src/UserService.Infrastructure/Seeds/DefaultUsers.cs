@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using SharedLibrary.Helpers;
 using System.Security.Claims;
-using UserService.Entities;
-using UserService.Infrastructure.Constants;
+using UserService.Domains.Entities;
 
 namespace UserService.Infrastructure.Seeds;
 
@@ -50,7 +50,6 @@ public static class DefaultUsers
             await roleManager.SeedClaimsForAdmin();
         }
     }
-
     private async static Task SeedClaimsForAdmin(this RoleManager<Role> roleManager)
     {
         var adminRole = await roleManager.FindByNameAsync("Admin");
@@ -68,7 +67,7 @@ public static class DefaultUsers
     public static async Task AddPermissionClaim(this RoleManager<Role> roleManager, Role role, string module)
     {
         var allClaims = await roleManager.GetClaimsAsync(role);
-        var allPermissions = Permissions.GeneratePermissionsForModule(module);
+        var allPermissions = GeneratePermissionsForModule(module);
         foreach (var permission in allPermissions)
         {
             if (!allClaims.Any(a => a.Type == "Permission" && a.Value == permission))
@@ -76,5 +75,16 @@ public static class DefaultUsers
                 await roleManager.AddClaimAsync(role, new Claim("Permission", permission));
             }
         }
+    }
+
+    private static List<string> GeneratePermissionsForModule(string module)
+    {
+        return new List<string>()
+        {
+            $"Permissions.{module}.Create",
+            $"Permissions.{module}.View",
+            $"Permissions.{module}.Edit",
+            $"Permissions.{module}.Delete",
+        };
     }
 }

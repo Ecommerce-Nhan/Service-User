@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using SharedLibrary.Dtos.Users;
-using UserService.Entities;
+using UserService.Domains.Entities;
 
 namespace UserService.Application.Mappers;
 

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using SharedLibrary.Dtos.Users;
-using UserService.Entities;
+using UserService.Domains.Entities;
 
 namespace UserService.Application.Validations;
 

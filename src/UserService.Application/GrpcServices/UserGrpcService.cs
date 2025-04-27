@@ -2,7 +2,7 @@
 using gRPCServer.User.Protos;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using UserService.Entities;
+using UserService.Domains.Entities;
 
 namespace UserService.Application.GrpcServices;
 

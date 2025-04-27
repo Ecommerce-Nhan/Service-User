@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using UserService.Entities;
-using UserService.Infrastructure.Constants;
+using SharedLibrary.Helpers;
+using UserService.Domains.Entities;
 
 namespace UserService.Infrastructure.Seeds;
 

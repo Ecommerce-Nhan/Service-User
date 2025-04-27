@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using UserService.Api.Extensions;
-using UserService.Entities;
+using UserService.Domains.Entities;
 using UserService.Infrastructure;
 using UserService.Infrastructure.Seeds;
 
