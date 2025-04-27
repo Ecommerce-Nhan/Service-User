@@ -9,11 +9,12 @@ using UserService.Api.Apis;
 using UserService.Api.Extentions;
 using UserService.Application;
 using UserService.Application.GrpcServices;
+using UserService.Application.Implements;
 using UserService.Application.Interfaces;
 using UserService.Application.Mappers;
 using UserService.Application.Validations;
 using UserService.Infrastructure;
-using MainService = UserService.Application.Implements.UserService;
+using UserMainService = UserService.Application.Implements.UserService;
 
 namespace UserService.Api.Extensions;
 
@@ -38,7 +39,9 @@ internal static class HostingExtensions
         builder.Services.AddAutoMapper(typeof(UserAutoMapperProfile).Assembly);
         builder.Services.AddGrpc();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-        builder.Services.AddScoped<IUserService, MainService>();
+        builder.Services.AddScoped<IUserService, UserMainService>();
+        builder.Services.AddScoped<IRoleService, RoleService>();
+        builder.Services.AddScoped<IRoleClaimService, RoleClaimService>();
         builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
         builder.Services.AddOpenApi();
         builder.Services.AddApiVersioning(
@@ -76,6 +79,7 @@ internal static class HostingExtensions
             });
         }
 
+        app.UseExceptionHandler("/error");
         app.UseSerilogRequestLogging();
         app.MapGrpcService<UserGrpcService>();
         app.MapUserEndpoints();

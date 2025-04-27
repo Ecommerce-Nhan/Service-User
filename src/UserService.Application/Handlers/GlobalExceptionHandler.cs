@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Serilog;
 using SharedLibrary.Exceptions;
+using SharedLibrary.Response.Identity;
 using SharedLibrary.Wrappers;
 using System.Net;
 
@@ -13,14 +14,12 @@ public class GlobalExceptionHandler : IExceptionHandler
                                                 Exception exception,
                                                 CancellationToken cancellationToken)
     {
-        var response = new Response<object>();
-        response.Succeeded = false;
-        response.Data = default!;
-        response.Message = "Something went wrong";
-        response.Errors = new[] { exception.Message };
         httpContext.Response.StatusCode = exception is BaseException e
                                           ? (int)e.StatusCode
                                           : (int)HttpStatusCode.InternalServerError;
+
+        var response = await Response<PermissionResponse>.FailAsync(new List<string> { exception.Message });
+        response.Message = "Something went wrong";
         Log.Error(exception.Message);
         await httpContext.Response.WriteAsJsonAsync(response, cancellationToken)
                                   .ConfigureAwait(false);
