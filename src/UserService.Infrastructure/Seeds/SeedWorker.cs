@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
 using UserService.Domains.Entities;
 
@@ -24,7 +24,7 @@ public class SeedWorker : IHostedService
 
         var loggerFactory = _serviceProvider.GetRequiredService<ILoggerFactory>();
         var logger = loggerFactory.CreateLogger("app");
-        
+
         try
         {
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();

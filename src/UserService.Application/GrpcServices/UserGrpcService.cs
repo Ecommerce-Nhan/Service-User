@@ -6,7 +6,7 @@ using UserService.Domains.Entities;
 
 namespace UserService.Application.GrpcServices;
 
-public class UserGrpcService(SignInManager<User> signInManager, UserManager<User> userManager, RoleManager<Role> roleManager) 
+public class UserGrpcService(SignInManager<User> signInManager, UserManager<User> userManager, RoleManager<Role> roleManager)
            : UserProtoService.UserProtoServiceBase
 {
     public override async Task<LoginModel> Login(LoginRequest request, ServerCallContext context)

@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 using UserService.Domains.Entities;
 
 namespace UserService.Infrastructure;
 
 public class UserDbContext : IdentityDbContext<User, Role, string,
-                                               IdentityUserClaim<string>, 
+                                               IdentityUserClaim<string>,
                                                UserRole,
                                                IdentityUserLogin<string>,
                                                RoleClaim,

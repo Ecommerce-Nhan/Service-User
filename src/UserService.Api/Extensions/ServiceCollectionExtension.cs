@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Text;
 using UserService.Api.Extensions;
 using UserService.Domains.Entities;
 using UserService.Infrastructure;
@@ -35,9 +34,9 @@ public static class ServiceCollectionExtension
             options.SignIn.RequireConfirmedEmail = true;
             options.SignIn.RequireConfirmedPhoneNumber = true;
 
-            options.Tokens.EmailConfirmationTokenProvider = 
+            options.Tokens.EmailConfirmationTokenProvider =
                 "emailconfirmation";
-            options.User.AllowedUserNameCharacters = 
+            options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@#$%^&*()+/=<> ";
         })
         .AddEntityFrameworkStores<UserDbContext>()
