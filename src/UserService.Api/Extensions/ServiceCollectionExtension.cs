@@ -48,19 +48,4 @@ public static class ServiceCollectionExtension
 
         return services;
     }
-
-    public static IServiceCollection AddRedis(this IServiceCollection services)
-    {
-        services.AddStackExchangeRedisCache(options =>
-        {
-            options.Configuration = "RedisCache";
-            options.ConfigurationOptions = new StackExchange.Redis.ConfigurationOptions()
-            {
-                AbortOnConnectFail = true,
-                EndPoints = { options.Configuration }
-            };
-        });
-
-        return services;
-    }
 }

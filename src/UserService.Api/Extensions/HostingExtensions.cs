@@ -1,13 +1,12 @@
 ﻿using Asp.Versioning;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Orchestration.ServiceDefaults;
 using Scalar.AspNetCore;
 using Serilog;
-using Serilog.Debugging;
 using SharedLibrary.Dtos.Users;
 using UserService.Api.Apis;
 using UserService.Api.Extentions;
-using UserService.Application;
 using UserService.Application.GrpcServices;
 using UserService.Application.Implements;
 using UserService.Application.Interfaces;
@@ -20,22 +19,15 @@ namespace UserService.Api.Extensions;
 
 internal static class HostingExtensions
 {
-    public static void ConfigureSerilog(WebApplicationBuilder builder)
-    {
-        Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration)
-                                                       .CreateLogger();
-
-        SelfLog.Enable(msg => Log.Information(msg));
-        Log.Information("Starting server.");
-    }
+    
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        builder.Host.UseSerilog();
+        builder.AddServiceDefaults();
 
+        builder.Host.UseSerilog();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddDatabaseConfiguration(builder.Configuration);
         builder.Services.AddCustomIdentity();
-        builder.Services.AddRedis();
         builder.Services.AddAutoMapper(typeof(UserAutoMapperProfile).Assembly);
         builder.Services.AddGrpc();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
