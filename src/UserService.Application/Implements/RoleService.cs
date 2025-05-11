@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SharedLibrary.Constants.Permission;
 using SharedLibrary.Constants.Role;
 using SharedLibrary.Requests.Identity;
 using SharedLibrary.Response.Identity;
@@ -106,6 +107,7 @@ public class RoleService(RoleManager<Role> roleManager,
             model.RoleId = role.Id;
             model.RoleName = role.Name;
             var roleClaimsResult = await roleClaimService.GetAllByRoleIdAsync(role.Id);
+
             if (roleClaimsResult.Succeeded)
             {
                 var roleClaims = roleClaimsResult.Data;
@@ -150,5 +152,84 @@ public class RoleService(RoleManager<Role> roleManager,
         #endregion GetPermissions
 
         return allPermissions;
+    }
+
+    public async Task<Response<string>> UpdatePermissionsAsync(PermissionRequest request)
+    {
+        try
+        {
+            var errors = new List<string>();
+            var role = await roleManager.FindByIdAsync(request.RoleId);
+            if (role == null) return await Response<string>.FailAsync("Role not found.");
+            if (role.Name == RoleConstants.AdministratorRole)
+            {
+                //var currentUser = await userManager.Users.SingleAsync(x => x.Id == _currentUserService.UserId);
+                //if (await userManager.IsInRoleAsync(currentUser, RoleConstants.AdministratorRole))
+                //{
+                //    return await Response<string>.FailAsync("Not allowed to modify Permissions for this Role.");
+                //}
+            }
+
+            var selectedClaims = request.RoleClaims.Where(a => a.Selected).ToList();
+            if (role.Name == RoleConstants.AdministratorRole)
+            {
+                if (!selectedClaims.Any(x => x.Value == Permissions.Roles.View)
+                   || !selectedClaims.Any(x => x.Value == Permissions.RoleClaims.View)
+                   || !selectedClaims.Any(x => x.Value == Permissions.RoleClaims.Edit))
+                {
+                    return await Response<string>.FailAsync(string.Format(
+                        "Not allowed to deselect {0} or {1} or {2} for this Role.",
+                        Permissions.Roles.View, Permissions.RoleClaims.View, Permissions.RoleClaims.Edit));
+                }
+            }
+
+            var claims = await roleManager.GetClaimsAsync(role);
+            foreach (var claim in claims)
+            {
+                await roleManager.RemoveClaimAsync(role, claim);
+            }
+            foreach (var claim in selectedClaims)
+            {
+                var addResult = await roleManager.AddPermissionClaim(role, claim.Value);
+                if (!addResult.Succeeded)
+                {
+                    errors.AddRange(addResult.Errors.Select(e => e.Description.ToString()));
+                }
+            }
+
+            var addedClaims = await roleClaimService.GetAllByRoleIdAsync(role.Id);
+            if (addedClaims.Succeeded)
+            {
+                foreach (var claim in selectedClaims)
+                {
+                    var addedClaim = addedClaims.Data.SingleOrDefault(x => x.Type == claim.Type && x.Value == claim.Value);
+                    if (addedClaim != null)
+                    {
+                        claim.Id = addedClaim.Id;
+                        claim.RoleId = addedClaim.RoleId;
+                        var saveResult = await roleClaimService.UpdateAsync(claim.Id, claim);
+                        if (!saveResult.Succeeded)
+                        {
+                            errors.AddRange(saveResult.Errors);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                errors.AddRange(addedClaims.Errors);
+            }
+
+            if (errors.Any())
+            {
+                return await Response<string>.FailAsync(errors);
+            }
+
+            return await Response<string>.SuccessAsync("Permissions Updated.");
+        }
+        catch (Exception ex)
+        {
+            return await Response<string>.FailAsync(ex.Message);
+        }
     }
 }

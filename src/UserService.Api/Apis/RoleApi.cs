@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using SharedLibrary.Requests.Identity;
-using UserService.Application.Implements;
+﻿using SharedLibrary.Requests.Identity;
 using UserService.Application.Interfaces;
-using UserService.Domains.Entities;
 
 namespace UserService.Api.Apis;
 
@@ -17,7 +14,7 @@ public static partial class ApiEndpointExtension
         v1.MapGet("/", GetRoles).WithNameAndSummary(GetRoles);
         v1.MapPost("/", CreateRole).WithNameAndSummary(CreateRole);
         v1.MapPut("/{id}", UpdateRole).WithNameAndSummary(UpdateRole);
-        v1.MapDelete("/{id}", DeletRole).WithNameAndSummary(DeletRole);
+        v1.MapDelete("/{id}", DeleteRole).WithNameAndSummary(DeleteRole);
 
         return builder;
     }
@@ -31,6 +28,6 @@ public static partial class ApiEndpointExtension
     private static async Task<IResult> UpdateRole(string id, RoleRequest roleRequest, IRoleService roleService)
         => Results.Ok(await roleService.UpdateAsync(roleRequest));
 
-    private static async Task<IResult> DeletRole(string id, IRoleService roleService)
+    private static async Task<IResult> DeleteRole(string id, IRoleService roleService)
         => Results.Ok(await roleService.DeleteAsync(id));
 }

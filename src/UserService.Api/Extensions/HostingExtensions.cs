@@ -76,6 +76,7 @@ internal static class HostingExtensions
         app.MapGrpcService<UserGrpcService>();
         app.MapUserEndpoints();
         app.MapRoleEndpoints();
+        app.MapRoleClaimEndpoints();
 
         return app;
     }

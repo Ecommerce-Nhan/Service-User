@@ -14,4 +14,5 @@ public interface IRoleService
     Task<Response<string>> DeleteAsync(string id);
 
     Task<Response<PermissionResponse>> GetAllPermissionsAsync(string roleId);
+    Task<Response<string>> UpdatePermissionsAsync(PermissionRequest request);
 }
