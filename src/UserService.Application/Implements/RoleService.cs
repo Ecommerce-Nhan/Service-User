@@ -22,16 +22,26 @@ public class RoleService(RoleManager<Role> roleManager,
         return count;
     }
 
-    public Task<Response<string>> CreateAsync(RoleRequest input)
+    public async Task<Response<string>> CreateAsync(RoleRequest request)
     {
-        throw new NotImplementedException();
+        var existingRole = await roleManager.FindByNameAsync(request.Name);
+        if (existingRole != null) return await Response<string>.FailAsync("Similar Role already exists.");
+        var response = await roleManager.CreateAsync(new Role(request.Name, request.Description));
+        if (response.Succeeded)
+        {
+            return await Response<string>.SuccessAsync(string.Format("Role {0} Created.", request.Name));
+        }
+        else
+        {
+            return await Response<string>.FailAsync(response.Errors.Select(e => e.Description.ToString()).ToList());
+        }
     }
 
     public async Task<Response<string>> DeleteAsync(string id)
     {
         var existingRole = await roleManager.FindByIdAsync(id);
 
-        if (existingRole.Name != RoleConstants.AdministratorRole &&
+        if (existingRole is not null && existingRole.Name != RoleConstants.AdministratorRole &&
             existingRole.Name != RoleConstants.BasicRole)
         {
             bool roleIsNotUsed = true;
@@ -71,9 +81,19 @@ public class RoleService(RoleManager<Role> roleManager,
         throw new NotImplementedException();
     }
 
-    public Task<Response<string>> UpdateAsync(PermissionRequest request)
+    public async Task<Response<string>> UpdateAsync(RoleRequest request)
     {
-        throw new NotImplementedException();
+        var existingRole = await roleManager.FindByIdAsync(request.Id);
+        if (existingRole == null) return await Response<string>.FailAsync("Role not found.");
+        if (existingRole.Name == RoleConstants.AdministratorRole || existingRole.Name == RoleConstants.BasicRole)
+        {
+            return await Response<string>.FailAsync(string.Format("Not allowed to modify {0} Role.", existingRole.Name));
+        }
+        existingRole.Name = request.Name;
+        existingRole.NormalizedName = request.Name.ToUpper();
+        existingRole.Description = request.Description;
+        await roleManager.UpdateAsync(existingRole);
+        return await Response<string>.SuccessAsync(string.Format("Role {0} Updated.", existingRole.Name));
     }
 
     public async Task<Response<PermissionResponse>> GetAllPermissionsAsync(string roleId)
