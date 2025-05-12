@@ -15,6 +15,8 @@ public static partial class ApiEndpointExtension
         v1.MapPost("/", CreateRole).WithNameAndSummary(CreateRole);
         v1.MapPut("/{id}", UpdateRole).WithNameAndSummary(UpdateRole);
         v1.MapDelete("/{id}", DeleteRole).WithNameAndSummary(DeleteRole);
+        v1.MapGet("/permissions/{roleId}", GetPermissionByRole).WithNameAndSummary(GetPermissionByRole);
+        v1.MapPut("/permissions/update", UpdatePermissions).WithNameAndSummary(UpdatePermissions);
 
         return builder;
     }
@@ -30,4 +32,10 @@ public static partial class ApiEndpointExtension
 
     private static async Task<IResult> DeleteRole(string id, IRoleService roleService)
         => Results.Ok(await roleService.DeleteAsync(id));
+
+    private static async Task<IResult> GetPermissionByRole(string roleId, IRoleService roleService)
+        => Results.Ok(await roleService.GetAllPermissionsAsync(roleId));
+
+    private static async Task<IResult> UpdatePermissions(PermissionRequest permissionRequest, IRoleService roleService)
+        => Results.Ok(await roleService.UpdatePermissionsAsync(permissionRequest));
 }

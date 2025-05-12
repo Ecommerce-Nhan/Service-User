@@ -34,7 +34,7 @@ public static class ClaimsHelper
                 var propertyValue = fi.GetValue(null);
 
                 if (propertyValue is not null)
-                    allPermissions.Add(new RoleClaimResponse { Value = propertyValue.ToString(), Type = ApplicationClaimTypes.Permission, Group = moduleName, Description = moduleDescription });
+                    allPermissions.Add(new RoleClaimResponse { ClaimValue = propertyValue.ToString(), ClaimType = ApplicationClaimTypes.Permission, Group = moduleName, Description = moduleDescription });
             }
         }
 

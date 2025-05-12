@@ -111,15 +111,15 @@ public class RoleService(RoleManager<Role> roleManager,
             if (roleClaimsResult.Succeeded)
             {
                 var roleClaims = roleClaimsResult.Data;
-                var allClaimValues = allPermissions.Select(a => a.Value).ToList();
-                var roleClaimValues = roleClaims.Select(a => a.Value).ToList();
+                var allClaimValues = allPermissions.Select(a => a.ClaimValue).ToList();
+                var roleClaimValues = roleClaims.Select(a => a.ClaimValue).ToList();
                 var authorizedClaims = allClaimValues.Intersect(roleClaimValues).ToList();
                 foreach (var permission in allPermissions)
                 {
-                    if (authorizedClaims.Any(a => a == permission.Value))
+                    if (authorizedClaims.Any(a => a == permission.ClaimValue))
                     {
                         permission.Selected = true;
-                        var roleClaim = roleClaims.SingleOrDefault(a => a.Value == permission.Value);
+                        var roleClaim = roleClaims.SingleOrDefault(a => a.ClaimValue == permission.ClaimValue);
                         if (roleClaim?.Description != null)
                         {
                             permission.Description = roleClaim.Description;
@@ -173,9 +173,9 @@ public class RoleService(RoleManager<Role> roleManager,
             var selectedClaims = request.RoleClaims.Where(a => a.Selected).ToList();
             if (role.Name == RoleConstants.AdministratorRole)
             {
-                if (!selectedClaims.Any(x => x.Value == Permissions.Roles.View)
-                   || !selectedClaims.Any(x => x.Value == Permissions.RoleClaims.View)
-                   || !selectedClaims.Any(x => x.Value == Permissions.RoleClaims.Edit))
+                if (!selectedClaims.Any(x => x.ClaimValue == Permissions.Roles.View)
+                   || !selectedClaims.Any(x => x.ClaimValue == Permissions.RoleClaims.View)
+                   || !selectedClaims.Any(x => x.ClaimValue == Permissions.RoleClaims.Edit))
                 {
                     return await Response<string>.FailAsync(string.Format(
                         "Not allowed to deselect {0} or {1} or {2} for this Role.",
@@ -190,7 +190,7 @@ public class RoleService(RoleManager<Role> roleManager,
             }
             foreach (var claim in selectedClaims)
             {
-                var addResult = await roleManager.AddPermissionClaim(role, claim.Value);
+                var addResult = await roleManager.AddPermissionClaim(role, claim.ClaimValue);
                 if (!addResult.Succeeded)
                 {
                     errors.AddRange(addResult.Errors.Select(e => e.Description.ToString()));
@@ -202,7 +202,7 @@ public class RoleService(RoleManager<Role> roleManager,
             {
                 foreach (var claim in selectedClaims)
                 {
-                    var addedClaim = addedClaims.Data.SingleOrDefault(x => x.Type == claim.Type && x.Value == claim.Value);
+                    var addedClaim = addedClaims.Data.SingleOrDefault(x => x.ClaimType == claim.ClaimType && x.ClaimValue == claim.ClaimValue);
                     if (addedClaim != null)
                     {
                         claim.Id = addedClaim.Id;

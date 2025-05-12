@@ -55,7 +55,7 @@ public class RoleClaimService : IRoleClaimService
         var existingRoleClaim =
                     await _db.RoleClaims
                         .SingleOrDefaultAsync(x =>
-                            x.RoleId == request.RoleId && x.ClaimType == request.Type && x.ClaimValue == request.Value);
+                            x.RoleId == request.RoleId && x.ClaimType == request.ClaimType && x.ClaimValue == request.ClaimValue);
         if (existingRoleClaim != null)
         {
             return await Response<string>.FailAsync("Similar Role Claim already exists.");
@@ -63,7 +63,7 @@ public class RoleClaimService : IRoleClaimService
         var roleClaim = _mapper.Map<RoleClaim>(request);
         await _db.RoleClaims.AddAsync(roleClaim);
         await _db.SaveChangesAsync();
-        return await Response<string>.SuccessAsync(string.Format("Role Claim {0} created.", request.Value));
+        return await Response<string>.SuccessAsync(string.Format("Role Claim {0} created.", request.ClaimValue));
     }
 
     public async Task<Response<string>> UpdateAsync(int id, RoleClaimRequest request)
@@ -83,14 +83,14 @@ public class RoleClaimService : IRoleClaimService
         }
         else
         {
-            existingRoleClaim.ClaimType = request.Type;
-            existingRoleClaim.ClaimValue = request.Value;
+            existingRoleClaim.ClaimType = request.ClaimType;
+            existingRoleClaim.ClaimValue = request.ClaimValue;
             existingRoleClaim.Group = request.Group;
             existingRoleClaim.Description = request.Description;
             existingRoleClaim.RoleId = request.RoleId;
             _db.RoleClaims.Update(existingRoleClaim);
             await _db.SaveChangesAsync();
-            return await Response<string>.SuccessAsync(string.Format("Role Claim {0} for Role {1} updated.", request.Value, existingRoleClaim.Role.Name));
+            return await Response<string>.SuccessAsync(string.Format("Role Claim {0} for Role {1} updated.", request.ClaimValue, existingRoleClaim.Role.Name));
         }
     }
 
