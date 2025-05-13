@@ -34,7 +34,7 @@ public static partial class ApiEndpointExtension
     private static async Task<IResult> GetUserById(string id, IUserService service)
         => Results.Ok(await service.GetUserByIdAsync(id));
 
-    private static async Task<IResult> CreateUser(CreateUserDto input, IUserService service)
+    private static async Task<IResult> CreateUser(RegisterRequest input, IUserService service)
         => Results.Ok(await service.CreateUserAsync(input));
 
     private static async Task<IResult> UpdateUser(string id, UpdateUserDto input, IUserService service)

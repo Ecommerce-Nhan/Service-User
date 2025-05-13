@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using AutoMapper.Internal;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,25 +34,66 @@ public class UserService(UserManager<User> userManager,
 
         return await Response<UserDto>.SuccessAsync(result);
     }
-    public async Task<bool> CreateUserAsync(CreateUserDto input)
+    public async Task<IResponse> CreateUserAsync(RegisterRequest request)
     {
-        var hasher = new PasswordHasher<User>();
-        var model = new User
+        var userWithSameUserName = await userManager.FindByNameAsync(request.UserName);
+        if (userWithSameUserName != null)
         {
-            UserName = input.UserName,
-            Email = input.Email,
-            PhoneNumber = input.PhoneNumber,
-            FirstName = input.FirstName,
-            LastName = input.LastName,
-            Address = input.Address,
-            DateOfBirth = input.DateOfBirth,
-            IsActive = false,
-            PhoneNumberConfirmed = false,
-            EmailConfirmed = false
+            return await Response.FailAsync(string.Format("Username {0} is already taken.", request.UserName));
+        }
+        var user = new User
+        {
+            Email = request.Email,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            UserName = request.UserName,
+            PhoneNumber = request.PhoneNumber,
+            IsActive = request.ActivateUser,
+            EmailConfirmed = request.AutoConfirmEmail,
+            Address = request.Address,
+            DateOfBirth = request.DateOfBirth
         };
 
-        var identityResult = await userManager.CreateAsync(model, input.Password);
-        return identityResult.Succeeded;
+        if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
+        {
+            var userWithSamePhoneNumber = await userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == request.PhoneNumber);
+            if (userWithSamePhoneNumber != null)
+            {
+                return await Response.FailAsync(string.Format("Phone number {0} is already registered.", request.PhoneNumber));
+            }
+        }
+
+        var userWithSameEmail = await userManager.FindByEmailAsync(request.Email);
+        if (userWithSameEmail == null)
+        {
+            var result = await userManager.CreateAsync(user, request.Password);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(user, RoleConstants.BasicRole);
+                //if (!request.AutoConfirmEmail)
+                //{
+                //    var verificationUri = await SendVerificationEmail(user, origin);
+                //    var mailRequest = new MailRequest
+                //    {
+                //        From = "mail@codewithmukesh.com",
+                //        To = user.Email,
+                //        Body = string.Format("Please confirm your account by <a href='{0}'>clicking here</a>.", verificationUri),
+                //        Subject = "Confirm Registration"
+                //    };
+                //    BackgroundJob.Enqueue(() => _mailService.SendAsync(mailRequest));
+                //    return await Response<string>.SuccessAsync(user.Id, string.Format(_localizer["User {0} Registered. Please check your Mailbox to verify!"], user.UserName));
+                //}
+                return await Response<string>.SuccessAsync(user.Id, string.Format("User {0} Registered.", user.UserName));
+            }
+            else
+            {
+                return await Response.FailAsync(result.Errors.Select(a => a.Description.ToString()).ToList());
+            }
+        }
+        else
+        {
+            return await Response.FailAsync(string.Format("Email {0} is already registered.", request.Email));
+        }
     }
     public async Task<bool> UpdateUserAsync(string id, UpdateUserDto input)
     {
