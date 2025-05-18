@@ -25,11 +25,8 @@ public static partial class ApiEndpointExtension
         return builder;
     }
 
-    private static async Task<IResult> GetUsers(
-        IUserService service)
-    {
-        return Results.Ok(await service.GetAll(new PaginationFilter()));
-    }
+    private static async Task<IResult> GetUsers(IUserService service)
+        => Results.Ok(await service.GetAll(new PaginationFilter()));
 
     private static async Task<IResult> GetUserById(string id, IUserService service)
         => Results.Ok(await service.GetUserByIdAsync(id));
