@@ -68,7 +68,7 @@ internal static class HostingExtensions
                 .WithDarkModeToggle(true)
                 .WithClientButton(true)
                 .WithTitle("User service API");
-            });
+            }).AllowAnonymous();
         }
 
         app.UseExceptionHandler("/error");
@@ -77,6 +77,8 @@ internal static class HostingExtensions
         app.MapUserEndpoints();
         app.MapRoleEndpoints();
         app.MapRoleClaimEndpoints();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         return app;
     }
