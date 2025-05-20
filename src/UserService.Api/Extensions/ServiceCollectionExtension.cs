@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -24,7 +25,7 @@ public static class ServiceCollectionExtension
 
     public static IServiceCollection AddCustomIdentity(this IServiceCollection services)
     {
-        services.AddIdentityCore<User>(options =>
+        services.AddIdentity<User, Role>(options =>
         {
             options.Password.RequireDigit = true;
             options.Password.RequiredLength = 8;
@@ -36,11 +37,11 @@ public static class ServiceCollectionExtension
             options.SignIn.RequireConfirmedEmail = true;
             options.SignIn.RequireConfirmedPhoneNumber = true;
 
-            options.Tokens.EmailConfirmationTokenProvider = "emailconfirmation";
+            options.Tokens.EmailConfirmationTokenProvider =
+                "emailconfirmation";
             options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@#$%^&*()+/=<> ";
         })
-        .AddRoles<Role>()
         .AddEntityFrameworkStores<UserDbContext>()
         .AddDefaultTokenProviders()
         .AddTokenProvider<EmailConfirmationTokenProvider<User>>("emailconfirmation");

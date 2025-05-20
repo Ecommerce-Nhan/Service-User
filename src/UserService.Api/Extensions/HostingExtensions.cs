@@ -19,12 +19,13 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+        builder.Services.AddCustomIdentity();
         builder.AddServiceDefaults();
 
         builder.Host.UseSerilog();
 
+        builder.Services.AddControllers();
         builder.Services.AddDatabaseConfiguration(builder.Configuration);
-        builder.Services.AddCustomIdentity();
         builder.Services.AddSwaggerConfiguration();
         builder.Services.AddAutoMapper(typeof(UserAutoMapperProfile).Assembly);
         builder.Services.AddGrpc();
@@ -39,7 +40,6 @@ internal static class HostingExtensions
     }
     public static WebApplication ConfigurePipeline(this WebApplication app, WebApplicationBuilder builder)
     {
-        app.MapControllers();
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
@@ -56,12 +56,13 @@ internal static class HostingExtensions
             });
             app.UseHangfireDashboard();
         }
-
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
         app.UseExceptionHandler("/error");
         app.UseSerilogRequestLogging();
         app.MapGrpcService<UserGrpcService>();
-        app.UseAuthentication();
-        app.UseAuthorization();
+        app.MapControllers();
 
         return app;
     }
