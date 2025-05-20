@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using UserService.Api.Extensions;
 using UserService.Domains.Entities;
 using UserService.Infrastructure;
@@ -45,6 +47,36 @@ public static class ServiceCollectionExtension
         services.Configure<EmailConfirmationTokenProviderOptions>(opt => opt.TokenLifespan = TimeSpan.FromDays(1));
         services.Configure<DataProtectionTokenProviderOptions>(x => x.TokenLifespan = TimeSpan.FromDays(1));
         services.AddHostedService<SeedWorker>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddSwaggerConfiguration(this IServiceCollection services)
+    {
+        services.AddEndpointsApiExplorer();
+        services.AddApiVersioning(cfg =>
+        {
+            cfg.DefaultApiVersion = new ApiVersion(1, 0);
+            cfg.AssumeDefaultVersionWhenUnspecified = true;
+            cfg.ReportApiVersions = true;
+            cfg.ApiVersionReader = ApiVersionReader.Combine(new UrlSegmentApiVersionReader(),
+                new HeaderApiVersionReader("x-api-version"),
+                new MediaTypeApiVersionReader("x-api-version"));
+            cfg.UnsupportedApiVersionStatusCode = StatusCodes.Status400BadRequest;
+        }).AddApiExplorer(options =>
+        {
+            options.GroupNameFormat = "'v'VVV";
+            options.SubstituteApiVersionInUrl = true;
+        });
+        services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "User API v1",
+                Version = "v1",
+                Description = "Development by TTNhan"
+            });
+        });
 
         return services;
     }

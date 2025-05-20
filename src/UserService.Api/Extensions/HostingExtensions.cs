@@ -1,11 +1,9 @@
-﻿using Asp.Versioning;
-using FluentValidation;
+﻿using FluentValidation;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Orchestration.ServiceDefaults;
-using Scalar.AspNetCore;
 using Serilog;
 using SharedLibrary.Dtos.Users;
-using UserService.Api.Apis;
 using UserService.Api.Extentions;
 using UserService.Application.GrpcServices;
 using UserService.Application.Implements;
@@ -19,33 +17,24 @@ namespace UserService.Api.Extensions;
 
 internal static class HostingExtensions
 {
-    
+
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         builder.AddServiceDefaults();
 
         builder.Host.UseSerilog();
-        builder.Services.AddEndpointsApiExplorer();
+
         builder.Services.AddDatabaseConfiguration(builder.Configuration);
         builder.Services.AddCustomIdentity();
+        builder.Services.AddSwaggerConfiguration();
         builder.Services.AddAutoMapper(typeof(UserAutoMapperProfile).Assembly);
         builder.Services.AddGrpc();
-        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
         builder.Services.AddScoped<IUserService, UserMainService>();
         builder.Services.AddScoped<IRoleService, RoleService>();
         builder.Services.AddScoped<IRoleClaimService, RoleClaimService>();
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
-        builder.Services.AddOpenApi();
-        builder.Services.AddApiVersioning(
-            opts =>
-            {
-                opts.ReportApiVersions = true;
-                opts.ApiVersionReader = ApiVersionReader.Combine(
-                    new UrlSegmentApiVersionReader(),
-                    new HeaderApiVersionReader("X-Version")
-                );
-            }
-        );
 
         return builder.Build();
     }
@@ -60,23 +49,18 @@ internal static class HostingExtensions
 
         if (app.Environment.IsDevelopment())
         {
-            app.MapOpenApi();
-            app.MapScalarApiReference(options =>
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
             {
-                options
-                .WithTheme(ScalarTheme.Kepler)
-                .WithDarkModeToggle(true)
-                .WithClientButton(true)
-                .WithTitle("User service API");
-            }).AllowAnonymous();
+                options.DisplayRequestDuration();
+            });
+            app.UseHangfireDashboard();
         }
 
+        app.MapControllers();
         app.UseExceptionHandler("/error");
         app.UseSerilogRequestLogging();
         app.MapGrpcService<UserGrpcService>();
-        app.MapUserEndpoints();
-        app.MapRoleEndpoints();
-        app.MapRoleClaimEndpoints();
         app.UseAuthentication();
         app.UseAuthorization();
 
