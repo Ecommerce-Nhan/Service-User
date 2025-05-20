@@ -24,7 +24,7 @@ public static class ServiceCollectionExtension
 
     public static IServiceCollection AddCustomIdentity(this IServiceCollection services)
     {
-        services.AddIdentity<User, Role>(options =>
+        services.AddIdentityCore<User>(options =>
         {
             options.Password.RequireDigit = true;
             options.Password.RequiredLength = 8;
@@ -36,11 +36,11 @@ public static class ServiceCollectionExtension
             options.SignIn.RequireConfirmedEmail = true;
             options.SignIn.RequireConfirmedPhoneNumber = true;
 
-            options.Tokens.EmailConfirmationTokenProvider =
-                "emailconfirmation";
+            options.Tokens.EmailConfirmationTokenProvider = "emailconfirmation";
             options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@#$%^&*()+/=<> ";
         })
+        .AddRoles<Role>()
         .AddEntityFrameworkStores<UserDbContext>()
         .AddDefaultTokenProviders()
         .AddTokenProvider<EmailConfirmationTokenProvider<User>>("emailconfirmation");

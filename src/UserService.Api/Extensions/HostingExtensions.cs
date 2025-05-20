@@ -17,7 +17,6 @@ namespace UserService.Api.Extensions;
 
 internal static class HostingExtensions
 {
-
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
         builder.AddServiceDefaults();
@@ -40,6 +39,7 @@ internal static class HostingExtensions
     }
     public static WebApplication ConfigurePipeline(this WebApplication app, WebApplicationBuilder builder)
     {
+        app.MapControllers();
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
@@ -57,7 +57,6 @@ internal static class HostingExtensions
             app.UseHangfireDashboard();
         }
 
-        app.MapControllers();
         app.UseExceptionHandler("/error");
         app.UseSerilogRequestLogging();
         app.MapGrpcService<UserGrpcService>();
