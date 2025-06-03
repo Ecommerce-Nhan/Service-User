@@ -8,11 +8,16 @@
 
   <ItemGroup>
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0" />
+	<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UserService.Domain\UserService.Entities.csproj" />
+    <ProjectReference Include="..\UserService.Domain\UserService.Domains.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>
