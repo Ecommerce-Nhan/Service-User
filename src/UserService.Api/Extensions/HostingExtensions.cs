@@ -47,7 +47,7 @@ internal static class HostingExtensions
             context.Database.Migrate();
         }
 
-        if (app.Environment.IsDevelopment())
+        if (!app.Environment.IsProduction())
         {
             app.UseSwagger();
             app.UseSwaggerUI(options =>
@@ -57,12 +57,12 @@ internal static class HostingExtensions
             app.UseHangfireDashboard();
         }
         app.UseRouting();
-        app.UseAuthentication();
-        app.UseAuthorization();
         app.UseExceptionHandler("/error");
         app.UseSerilogRequestLogging();
         app.MapGrpcService<UserGrpcService>();
         app.MapControllers();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         return app;
     }
