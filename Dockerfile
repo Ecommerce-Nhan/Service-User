@@ -1,10 +1,9 @@
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS base
 WORKDIR /app
 EXPOSE 8082
-ENV ASPNETCORE_ENVIRONMENT=Development
+ENV ASPNETCORE_ENVIRONMENT=Staging
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ENV ASPNETCORE_ENVIRONMENT=Development
 ARG BUILD_CONFIGURATION=Release
 ARG GITHUB_USERNAME
 ARG GITHUB_TOKEN
@@ -20,13 +19,12 @@ RUN dotnet nuget add source \
 
 RUN dotnet restore "UserService.Api/UserService.Api.csproj"
 WORKDIR "/src/UserService.Api"
-RUN dotnet build "./UserService.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./UserService.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build --no-restore
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "UserService.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "UserService.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false --no-restore
 
 FROM base AS final
-WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "UserService.Api.dll"]
