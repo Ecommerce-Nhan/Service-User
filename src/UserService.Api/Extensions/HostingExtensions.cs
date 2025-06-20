@@ -1,8 +1,11 @@
 ﻿using FluentValidation;
 using Hangfire;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Orchestration.ServiceDefaults;
 using Serilog;
+using SharedLibrary.Dtos.HealthChecks;
 using SharedLibrary.Dtos.Users;
 using UserService.Api.Extentions;
 using UserService.Application.GrpcServices;
@@ -35,11 +38,13 @@ internal static class HostingExtensions
         builder.Services.AddScoped<IRoleClaimService, RoleClaimService>();
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
+        builder.Services.AddHealthChecks().AddDbContextCheck<UserDbContext>();
 
         return builder.Build();
     }
     public static WebApplication ConfigurePipeline(this WebApplication app, WebApplicationBuilder builder)
     {
+        app.CheckHealthy();
         using (var scope = app.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
@@ -63,6 +68,32 @@ internal static class HostingExtensions
         app.MapControllers();
         app.UseAuthentication();
         app.UseAuthorization();
+
+        return app;
+    }
+
+    private static WebApplication CheckHealthy(this WebApplication app)
+    {
+        app.UseHealthChecks("/api/v1/user/health", new HealthCheckOptions
+        {
+            ResponseWriter = async (context, report) =>
+            {
+                context.Response.ContentType = "application/json";
+                var response = new HealthCheckResponse
+                {
+                    Status = report.Status.ToString(),
+                    HealthChecks = report.Entries.Select(x => new IndividualHealthCheckResponse
+                    {
+                        Component = x.Key,
+                        Status = x.Value.Status.ToString(),
+                        Description = x.Value.Description ?? string.Empty
+
+                    }),
+                    HealthCheckDuration = report.TotalDuration
+                };
+                await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+            }
+        });
 
         return app;
     }
