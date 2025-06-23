@@ -44,6 +44,7 @@ internal static class HostingExtensions
     }
     public static WebApplication ConfigurePipeline(this WebApplication app, WebApplicationBuilder builder)
     {
+        app.UseCors("AllowAll");
         app.CheckHealthy();
         using (var scope = app.Services.CreateScope())
         {
