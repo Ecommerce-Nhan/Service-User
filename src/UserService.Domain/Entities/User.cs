@@ -20,4 +20,6 @@ public class User : IdentityUser, IAuditableEntity<string>
     public string LastModifiedBy { get; set; } = string.Empty;
     public DateTime? LastModifiedOn { get; set; }
     public virtual ICollection<UserRole> UserRoles { get; set; }
+    public string RefreshToken { get; set; } = string.Empty;
+    public DateTime RefreshTokenExpiryTime { get; set; }
 }

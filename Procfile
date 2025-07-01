@@ -1,0 +1,1 @@
+web: dotnet ./app/UserService.Api.dll
