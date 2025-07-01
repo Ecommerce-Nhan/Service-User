@@ -1,0 +1,24 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      dotnet: 9.0
+    commands:
+      - echo "Add GitHub NuGet source"
+      - dotnet nuget add source "https://nuget.pkg.github.com/nhanne/index.json" \
+        --name github \
+        --username "$GITHUB_USERNAME" \
+        --password "$GITHUB_TOKEN" \
+        --store-password-in-clear-text
+  pre_build:
+    commands:
+      - dotnet restore src/UserService.Api/UserService.Api.csproj
+  build:
+    commands:
+      - dotnet build src/UserService.Api/UserService.Api.csproj
+  post_build:
+    commands:
+      - dotnet publish -c Release -o ./app/ src/UserService.Api/UserService.Api.csproj
+artifacts:
+  files:
+    - "**/*"
