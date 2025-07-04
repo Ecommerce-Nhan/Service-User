@@ -1,4 +1,10 @@
 version: 0.2
+env:
+  variables:
+    ASPNETCORE_ENVIRONMENT: "Development"
+  parameter-store:
+    GITHUB_USERNAME: GITHUB_USERNAME
+    GITHUB_TOKEN: GITHUB_TOKEN
 phases:
   install:
     runtime-versions:
@@ -6,15 +12,43 @@ phases:
     commands:
       - echo "Add GitHub NuGet source"
       - dotnet nuget add source "https://nuget.pkg.github.com/nhanne/index.json" --name github --username "$GITHUB_USERNAME" --password "$GITHUB_TOKEN" --store-password-in-clear-text
+
   pre_build:
+    # commands:
+    #   - echo Build started on `date`
+    #   - dotnet restore src/UserService.Api/UserService.Api.csproj
+    #   - dotnet clean src/UserService.Api/UserService.Api.csproj
+    #   - dotnet restore src/UserService.Api/UserService.Api.csproj
+    #   - dotnet build src/UserService.Api/UserService.Api.csproj
     commands:
-      - dotnet restore src/UserService.Api/UserService.Api.csproj
+      - echo "Login ECR"
+      - aws --version
+      - aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 296062556991.dkr.ecr.ap-southeast-1.amazonaws.com
+      - REPOSITORY_URI=296062556991.dkr.ecr.ap-southeast-1.amazonaws.com/user-service-api
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
   build:
     commands:
-      - dotnet build src/UserService.Api/UserService.Api.csproj
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - echo $GITHUB_USERNAME $GITHUB_TOKEN
+      - docker build --build-arg GITHUB_USERNAME=$GITHUB_USERNAME --build-arg GITHUB_TOKEN=$GITHUB_TOKEN -t user-service-api .
+
+      - echo "Tagging the Docker image..."
+      - docker tag user-service-api:latest $REPOSITORY_URI:latest
+      - docker tag user-service-api:latest $REPOSITORY_URI:$COMMIT_HASH
   post_build:
     commands:
-      - dotnet publish -c Release -o ./app/ src/UserService.Api/UserService.Api.csproj
+      # - dotnet publish -c Release -o ./app/ src/UserService.Api/UserService.Api.csproj
+      - echo Pushing the Docker image...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$COMMIT_HASH
+      - echo Build completed on `date`
+      - echo Writing image definitions file...
+      - printf '[{"name":"user-service-container","imageUri":"%s"}]'
+        $REPOSITORY_URI:$COMMIT_HASH > imagedefinitions.json
+      - cat imagedefinitions.json
 artifacts:
+  # files:
+  #   - "**/*"
   files:
-    - "**/*"
+    - imagedefinitions.json
