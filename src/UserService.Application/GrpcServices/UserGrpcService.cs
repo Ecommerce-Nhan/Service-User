@@ -1,11 +1,13 @@
 ﻿using Grpc.Core;
 using gRPCServer.User.Protos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using UserService.Domains.Entities;
 
 namespace UserService.Application.GrpcServices;
 
+[AllowAnonymous]
 public class UserGrpcService(SignInManager<User> signInManager, UserManager<User> userManager, RoleManager<Role> roleManager)
            : UserProtoService.UserProtoServiceBase
 {

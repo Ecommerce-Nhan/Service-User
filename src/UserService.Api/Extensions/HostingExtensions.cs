@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Hangfire;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Orchestration.ServiceDefaults;
@@ -39,7 +40,6 @@ internal static class HostingExtensions
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserValidator>();
         builder.Services.AddHealthChecks().AddDbContextCheck<UserDbContext>();
-
         return builder.Build();
     }
     public static WebApplication ConfigurePipeline(this WebApplication app, WebApplicationBuilder builder)
@@ -65,10 +65,11 @@ internal static class HostingExtensions
         app.UseRouting();
         app.UseExceptionHandler("/error");
         app.UseSerilogRequestLogging();
-        app.MapGrpcService<UserGrpcService>();
-        app.MapControllers();
+       
         app.UseAuthentication();
         app.UseAuthorization();
+        app.MapControllers();
+        app.MapGrpcService<UserGrpcService>();
 
         return app;
     }
