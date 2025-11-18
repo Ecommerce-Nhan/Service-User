@@ -11,4 +11,8 @@
 		<!--<PackageReference Include="SharedLibrary" Version="1.1.4" />-->
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\..\BuildingBlocks\SharedLibrary\src\SharedLibrary.csproj" />
+	</ItemGroup>
+
 </Project>
