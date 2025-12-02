@@ -16,7 +16,7 @@ public class UserService(UserManager<User> userManager,
     RoleManager<Role> roleManager,
     IMapper mapper) : IUserService
 {
-    public async Task<PagedResponse<List<UserDto>>> GetAll(PaginationFilter pagination)
+    public async Task<PagedResponse<List<UserDto>>> GetAll(PageRequest pagination)
     {
         var pagedData = await GetPagedDataAsync(pagination);
         var result = mapper.Map<PagedResponse<List<UserDto>>>(pagedData);
@@ -121,9 +121,9 @@ public class UserService(UserManager<User> userManager,
         return identityResult.Succeeded;
     }
 
-    private async Task<PagedResponse<List<User>>> GetPagedDataAsync(PaginationFilter pageFilter)
+    private async Task<PagedResponse<List<User>>> GetPagedDataAsync(PageRequest pageFilter)
     {
-        var validFilter = new PaginationFilter(pageFilter.PageNumber, pageFilter.PageSize);
+        var validFilter = new PageRequest(pageFilter.PageNumber, pageFilter.PageSize);
         var query = userManager.Users.AsNoTracking();
 
         var pagedData = await query.Skip((validFilter.PageNumber - 1) * validFilter.PageSize)

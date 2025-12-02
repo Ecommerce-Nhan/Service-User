@@ -24,7 +24,7 @@ public class UserController : ControllerBase
     [HttpGet]
     [PermissionAuthorize(Permissions.Users.View)]
     public async Task<IActionResult> GetUsers()
-        => Ok(await _service.GetAll(new PaginationFilter()));
+        => Ok(await _service.GetAll(new PageRequest()));
 
     [HttpGet("{id}")]
     [PermissionAuthorize(Permissions.Users.View)]

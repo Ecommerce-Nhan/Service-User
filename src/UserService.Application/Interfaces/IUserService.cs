@@ -9,7 +9,7 @@ namespace UserService.Application.Interfaces;
 
 public interface IUserService
 {
-    Task<PagedResponse<List<UserDto>>> GetAll(PaginationFilter pagination);
+    Task<PagedResponse<List<UserDto>>> GetAll(PageRequest pagination);
     Task<IResponse<UserDto>> GetUserByIdAsync(string id);
     Task<IResponse> CreateUserAsync(RegisterRequest input);
     Task<bool> UpdateUserAsync(string id, UpdateUserDto input);
